@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'dart:io';
 
 void main() => runApp(MyApp());
@@ -16,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page', key: null,),
+      home: MyHomePage(title: 'Exercise 2', key: null,),
     );
   }
 }
@@ -34,28 +36,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List data =[];
 
-  // Function to get the JSON data
   Future<String> getJSONData() async {
     var response = await http.get(
       // Encode the url
         Uri.parse("https://api.json-generator.com/templates/Xp8zvwDP14dJ/data?access_token=v3srs6i1veetv3b2dolta9shrmttl72vnfzm220z"),
         // Only accept JSON response
         headers: {
-      //    HttpHeaders.authorizationHeader: '"access_token":  "v3srs6i1veetv3b2dolta9shrmttl72vnfzm220z"',
           "Accept": "application/json"
              }
-
-     //   Uri.parse("https://unsplash.com/napi/photos/Q14J2k8VE3U/related"),
-    // Only accept JSON response
-    //    headers: {"Accept": "application/json"}
     );
   print (response.body);
     setState(() {
       // Get the JSON data
       data = json.decode(response.body.toString());
-      //['_id'];
     });
-
     return "Successfull";
   }
 
@@ -75,7 +69,6 @@ class _MyHomePageState extends State<MyHomePage> {
         itemCount: data == null ? 0 : data.length,
         itemBuilder: (context, index) {
           return _buildImageColumn(data[index]);
-          // return _buildRow(data[index]);
         }
     );
   }
@@ -104,12 +97,11 @@ class _MyHomePageState extends State<MyHomePage> {
       title: Text(
         item['name']['first'] + " " + item['name']['last'],
       ),
-      subtitle: Text("Likes: " + item['likes'].toString()),
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => Detail(first: item['name']['first'] )),
+              builder: (context) => Detail(first: item['name']['first'], last: item['name']['last'], email: item['email'], latitude: item['location']['latitude'], longitude: item['location']['longitude'] )),
         );
       },
     );
@@ -124,19 +116,52 @@ class _MyHomePageState extends State<MyHomePage> {
 
 class Detail extends StatelessWidget {
   final String first;
-  Detail({required this.first});
+  final String last;
+  final String email;
+  final double latitude;
+   double? longitude;
+  Detail({required this.first, required this.last, required this.email, required this.latitude, this.longitude});
+
+
 
   @override
   Widget build(BuildContext context) {
+    longitude ??= 0;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Second Route"),
+        title: Text("User Details"),
       ),
       body: Column(
         children: <Widget>[
-          Text("${first}"),
+      Expanded(
+          child: FlutterMap(
+      options: new MapOptions(
+          center: new LatLng(latitude, longitude!),
+      zoom: 13.0,
+    ),
+    layers: [
+    new TileLayerOptions(
+    urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    subdomains: ['a', 'b', 'c']
+    ),
+    new MarkerLayerOptions(
+    markers: [
+    new Marker(
+    width: 80.0,
+    height: 80.0,
+    point: new LatLng(latitude, longitude!),
+    builder: (ctx) =>
+    new Container(
+    child: new FlutterLogo(),
+    ),
+    ),
+    ],
+    ),
+    ],
+    ),),
+          Text("${first} ${last} ${email}"),
           Center(
-            child: RaisedButton(
+            child: ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
               },
