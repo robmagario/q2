@@ -89,7 +89,6 @@ class _MyHomePageState extends State<MyHomePage> {
       children: [
         new CachedNetworkImage(
           imageUrl: item['picture'],
-      //    imageUrl: item['urls']['small'],
           placeholder: (context, url) => new CircularProgressIndicator(),
           errorWidget: (context, url, error) => new Icon(Icons.error),
           fadeOutDuration: new Duration(seconds: 1),
@@ -103,10 +102,16 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _buildRow(dynamic item) {
     return ListTile(
       title: Text(
-        item['name']['last'] == null ? '': item['name']['last'],
-     //   item['description'] == null ? '': item['description'],
+        item['name']['first'] + " " + item['name']['last'],
       ),
       subtitle: Text("Likes: " + item['likes'].toString()),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => Detail(first: item['name']['first'] )),
+        );
+      },
     );
   }
   @override
@@ -114,5 +119,32 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     // Call the getJSONData() method when the app initializes
     this.getJSONData();
+  }
+}
+
+class Detail extends StatelessWidget {
+  final String first;
+  Detail({required this.first});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Second Route"),
+      ),
+      body: Column(
+        children: <Widget>[
+          Text("${first}"),
+          Center(
+            child: RaisedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Go back!'),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
