@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
 
 void main() => runApp(MyApp());
@@ -150,7 +151,12 @@ class Detail extends StatelessWidget {
     point: LatLng(latitude, longitude!),
     builder: (ctx) =>
     Container(
-    child: FlutterLogo(),
+    child: const FaIcon
+      (
+      FontAwesomeIcons.mapPin,
+      color: Colors.deepOrange,
+      size: 35,
+    )
     ),
     ),
     ],
