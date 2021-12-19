@@ -45,7 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
           "Accept": "application/json"
              }
     );
-  print (response.body);
+
     setState(() {
       // Get the JSON data
       data = json.decode(response.body.toString());
@@ -74,13 +74,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildImageColumn(dynamic item) => Container(
-    decoration: BoxDecoration(
+    decoration: const BoxDecoration(
         color: Colors.white54
     ),
     margin: const EdgeInsets.all(4),
     child: Column(
       children: [
-        new CachedNetworkImage(
+        CachedNetworkImage(
           imageUrl: item['picture'],
           placeholder: (context, url) => new CircularProgressIndicator(),
           errorWidget: (context, url, error) => new Icon(Icons.error),
@@ -110,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     // Call the getJSONData() method when the app initializes
-    this.getJSONData();
+    getJSONData();
   }
 }
 
@@ -122,37 +122,35 @@ class Detail extends StatelessWidget {
    double? longitude;
   Detail({required this.first, required this.last, required this.email, required this.latitude, this.longitude});
 
-
-
   @override
   Widget build(BuildContext context) {
     longitude ??= 0;
     return Scaffold(
       appBar: AppBar(
-        title: Text("User Details"),
+        title: const Text("User Details"),
       ),
       body: Column(
         children: <Widget>[
       Expanded(
           child: FlutterMap(
-      options: new MapOptions(
+      options: MapOptions(
           center: LatLng(latitude, longitude!),
       zoom: 13.0,
     ),
     layers: [
-    new TileLayerOptions(
+    TileLayerOptions(
     urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     subdomains: ['a', 'b', 'c']
     ),
-    new MarkerLayerOptions(
+    MarkerLayerOptions(
     markers: [
-    new Marker(
+    Marker(
     width: 80.0,
     height: 80.0,
-    point: new LatLng(latitude, longitude!),
+    point: LatLng(latitude, longitude!),
     builder: (ctx) =>
-    new Container(
-    child: new FlutterLogo(),
+    Container(
+    child: FlutterLogo(),
     ),
     ),
     ],
@@ -165,7 +163,7 @@ class Detail extends StatelessWidget {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('Go back!'),
+              child: const Text('Go back!'),
             ),
           ),
         ],
