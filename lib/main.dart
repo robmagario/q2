@@ -136,7 +136,7 @@ class Detail extends StatelessWidget {
       Expanded(
           child: FlutterMap(
       options: new MapOptions(
-          center: new LatLng(latitude, longitude!),
+          center: LatLng(latitude, longitude!),
       zoom: 13.0,
     ),
     layers: [
