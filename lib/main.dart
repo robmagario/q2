@@ -6,16 +6,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'dart:io';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -25,6 +22,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
+
   MyHomePage({required Key? key, required this.title}) : super(key: key);
 
   final String title;
@@ -67,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _buildListView() {
     return ListView.builder(
         padding: const EdgeInsets.all(16.0),
-        itemCount: data == null ? 0 : data.length,
+        itemCount: data.length,
         itemBuilder: (context, index) {
           return _buildImageColumn(data[index]);
         }
@@ -102,7 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => Detail(first: item['name']['first'], last: item['name']['last'], email: item['email'], latitude: item['location']['latitude'], longitude: item['location']['longitude'] )),
+              builder: (context) => Detail(picture: item['picture'], first: item['name']['first'], last: item['name']['last'], email: item['email'], latitude: item['location']['latitude'], longitude: item['location']['longitude'] )),
         );
       },
     );
@@ -116,12 +114,14 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class Detail extends StatelessWidget {
+  final String picture;
   final String first;
   final String last;
   final String email;
   final double latitude;
-   double? longitude;
-  Detail({required this.first, required this.last, required this.email, required this.latitude, this.longitude});
+  double? longitude;
+
+  Detail({required this.picture, required this.first, required this.last, required this.email, required this.latitude, this.longitude});
 
   @override
   Widget build(BuildContext context) {
@@ -134,36 +134,49 @@ class Detail extends StatelessWidget {
         children: <Widget>[
       Expanded(
           child: FlutterMap(
-      options: MapOptions(
-          center: LatLng(latitude, longitude!),
-      zoom: 13.0,
-    ),
-    layers: [
-    TileLayerOptions(
-    urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    subdomains: ['a', 'b', 'c']
-    ),
-    MarkerLayerOptions(
-    markers: [
-    Marker(
-    width: 80.0,
-    height: 80.0,
-    point: LatLng(latitude, longitude!),
-    builder: (ctx) =>
-    Container(
-    child: const FaIcon
-      (
-      FontAwesomeIcons.mapPin,
-      color: Colors.deepOrange,
-      size: 35,
-    )
-    ),
-    ),
-    ],
-    ),
-    ],
-    ),),
-          Text("${first} ${last} ${email}"),
+                  options: MapOptions(
+                  center: LatLng(latitude, longitude!),
+                  zoom: 13.0,
+                  ),
+          layers: [
+                  TileLayerOptions(
+                    urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                    subdomains: ['a', 'b', 'c']
+                    ),
+                  MarkerLayerOptions(
+                    markers: [
+                  Marker(
+                    width: 80.0,
+                    height: 80.0,
+                    point: LatLng(latitude, longitude!),
+                    builder: (ctx) =>
+                  Container(
+                    child: const FaIcon
+                  (
+                    FontAwesomeIcons.mapPin,
+                    color: Colors.deepOrange,
+                    size: 35,
+                  )
+                  ),
+                  ),
+                  ],
+                  ),
+                  ],
+                  ),),
+
+          Row (
+          children: [Image.network(
+            picture,
+            width: 50,
+            height: 50,
+          ),
+
+            Column (
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [Text("${first} ${last}"),
+                          Text("${email}"),]),
+          ]),
+
           Center(
             child: ElevatedButton(
               onPressed: () {
